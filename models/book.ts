@@ -8,6 +8,7 @@ interface BookAttributes {
   author: string;
   isbn: string;
   description:string;
+  onLoan:boolean;
 };
 module.exports = (sequelize: any, DataTypes:any) => {
   class book extends Model<BookAttributes> implements BookAttributes {
@@ -17,10 +18,11 @@ module.exports = (sequelize: any, DataTypes:any) => {
     author!: string;
     isbn!: string;
     description!: string;
-    
-  
+    onLoan!:boolean
     static associate(models:any) {
-
+     book.belongsToMany(models.user,{
+      through:'rent_book'
+     });
     }
   }
   book.init({
@@ -45,6 +47,10 @@ module.exports = (sequelize: any, DataTypes:any) => {
     description: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    onLoan:{
+      type:DataTypes.BOOLEAN,
+      allowNull:false
     }
   }, {
     sequelize,

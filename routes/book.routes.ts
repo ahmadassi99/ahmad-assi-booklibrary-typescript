@@ -1,8 +1,11 @@
 import {body} from 'express-validator'
+import passport from 'passport';
 module.exports=(app: any)=>{
     
     const books=require("../controller/book.controller");
     var router= require('express').Router();
+    passport.initialize();
+    require('../passport');
 
     var validationSchemaForBooks=[
         body('name').exists().withMessage("name is Required").isString().withMessage("name should be String"),
@@ -22,11 +25,17 @@ module.exports=(app: any)=>{
     router.put("/:id",books.update);
     //Delete book By Id
     router.delete("/:id",books.delete);
+    //rent book Api
+    router.post("/rent/:id",passport.authenticate('jwt',{session:false}),books.rent);
+    //return book Api
+    router.post("/return/:id",passport.authenticate('jwt',{session:false}),books.returnBook);
     //the basic route
     app.use('/api/books',router);
-    //for the invalid routes
-    app.get('*',books.invalid);
-    app.post('*',books.invalid);
-    app.put('*',books.invalid);
-    app.delete('*',books.invalid);
+    
+    // //for the invalid routes
+    // // i have commit here to let the user api work ,,
+    // //app.get('*',books.invalid);
+    // //app.post('*',books.invalid);
+    // app.put('*',books.invalid);
+    // app.delete('*',books.invalid);
 }

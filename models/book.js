@@ -5,6 +5,9 @@ const sequelize_1 = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
     class book extends sequelize_1.Model {
         static associate(models) {
+            book.belongsToMany(models.user, {
+                through: 'rent_book'
+            });
         }
     }
     book.init({
@@ -28,6 +31,10 @@ module.exports = (sequelize, DataTypes) => {
         },
         description: {
             type: DataTypes.STRING,
+            allowNull: false
+        },
+        onLoan: {
+            type: DataTypes.BOOLEAN,
             allowNull: false
         }
     }, {
